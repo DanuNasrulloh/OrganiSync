@@ -6,4 +6,10 @@
     <string name="organisync">OrganiSync</string>
     <string name="welcome_back">Welcome back</string>
     <string name="create_event">Create Event</string>
+    <string name="uniting_and_streamlining_your_organization">Uniting and Streamlining Your Organization</string>
+    <string name="start">Start</string>
+    <string name="title_news">title_news</string>
+    <string name="event_image">Event image</string>
+    <string name="WebclientID">374806306735-p07kpal3i0gglsrgjpj5hsfa04vekc4p.apps.googleusercontent.com</string>
+    <string name="logout">Logout</string>
 </resources>

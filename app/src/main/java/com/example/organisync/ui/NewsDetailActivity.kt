@@ -1,72 +1,56 @@
 package com.example.organisync.ui
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
-import com.example.organisync.R
 import com.example.organisync.databinding.ActivityNewsDetailBinding
+import com.example.organisync.model.News
 
 class NewsDetailActivity : AppCompatActivity() {
-    class NewsDetailActivity : AppCompatActivity() {
 
-        private lateinit var binding: ActivityNewsDetailBinding
+    private lateinit var binding: ActivityNewsDetailBinding
 
-        override fun onCreate(savedInstanceState: Bundle?) {
-            super.onCreate(savedInstanceState)
-            binding = ActivityNewsDetailBinding.inflate(layoutInflater)
-            setContentView(binding.root)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        binding = ActivityNewsDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-            // Get data from intent
-            val title = intent.getStringExtra("title") ?: ""
-            val imageUrl = intent.getStringExtra("imageUrl") ?: ""
-            val organization = intent.getStringExtra("organization") ?: ""
-            val university = intent.getStringExtra("university") ?: ""
-            val description = intent.getStringExtra("description") ?: ""
+        window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_FULLSCREEN
+        supportActionBar?.hide()
 
-            // Set data to views
-            with(binding) {
-                tvTitle.text = title
-                tvOrganization.text = organization
-                tvUniversity.text = university
-                tvDescription.text = description
+        setupViews()
+        setupBackButton()
+    }
 
-                // Load image using Glide (make sure to add Glide dependency)
-                Glide.with(this@NewsDetailActivity)
-                    .load(imageUrl)
-                    //.placeholder(R.drawable.placeholder_image)
-                    .into(ivNews)
+    private fun setupViews() {
+        val news = getNewsDetails()
 
-                // Handle back button click
-                btnBack.setOnClickListener {
-                    finish()
-                }
-            }
-        }
-
-        companion object {
-            fun start(context: Context, newsData: NewsData) {
-                val intent = Intent(context, NewsDetailActivity::class.java).apply {
-                    putExtra("title", newsData.title)
-                    putExtra("imageUrl", newsData.imageUrl)
-                    putExtra("organization", newsData.organization)
-                    putExtra("university", newsData.university)
-                    putExtra("description", newsData.description)
-                }
-                context.startActivity(intent)
-            }
+        binding.apply {
+            tvTitle.text = news.title
+            tvOrganization.text = news.namaOrganisasi
+            tvDescription.text = news.deskripsi
+            tvUniversity.text = news.asalUniversitas
+            Glide.with(this@NewsDetailActivity)
+                .load(news.photo)
+                .into(ivNews)
         }
     }
 
-    // Data class for news
-    data class NewsData(
-        val title: String,
-        val imageUrl: String,
-        val organization: String,
-        val university: String,
-        val description: String
-    )
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            onBackPressed()
+        }
+    }
+
+    private fun getNewsDetails(): News {
+        return News(
+            id = 0,
+            title = intent.getStringExtra("title").toString(),
+            deskripsi = intent.getStringExtra("description").toString(),
+            photo = intent.getStringExtra("photo").toString(),
+            asalUniversitas = intent.getStringExtra("universitas").toString(),
+            namaOrganisasi = intent.getStringExtra("organisasi").toString()
+        )
+    }
+}

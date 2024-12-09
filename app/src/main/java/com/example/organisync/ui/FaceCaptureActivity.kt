@@ -7,8 +7,10 @@ import android.view.View
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.OptIn
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
+import androidx.camera.core.ExperimentalGetImage
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
@@ -101,6 +103,7 @@ class FaceCaptureActivity : AppCompatActivity() {
         imageCapture.takePicture(
             ContextCompat.getMainExecutor(this),
             object : ImageCapture.OnImageCapturedCallback() {
+                @OptIn(ExperimentalGetImage::class)
                 override fun onCaptureSuccess(image: ImageProxy) {
                     // Convert ImageProxy to InputImage for ML Kit
                     val mediaImage = image.image

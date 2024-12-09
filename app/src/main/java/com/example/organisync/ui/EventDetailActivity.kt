@@ -1,14 +1,14 @@
 package com.example.organisync.ui
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.organisync.R
+import com.bumptech.glide.Glide
 import com.example.organisync.databinding.ActivityEventDetailBinding
+import com.example.organisync.model.News
 
 class EventDetailActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityEventDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,61 +16,47 @@ class EventDetailActivity : AppCompatActivity() {
         binding = ActivityEventDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        window.decorView.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_FULLSCREEN
+        supportActionBar?.hide()
+
         setupViews()
-        setupListeners()
+        setupBackButton()
     }
 
     private fun setupViews() {
-        // Mengatur data event (bisa dari intent atau viewModel)
+        // Assuming you have an Event object with the details
+        val event = getEventDetails()
+
         binding.apply {
-            tvUserName.text = "Danu nasrullah"
-            tvUniversity.text = "Universitas Ahmad Dahlan"
-            tvEventName.text = "P a r a d o k s"
-
-            // Contoh pengaturan data lainnya
-            tvEventDate.text = "25 November 2024"
-            tvEventDescription.text = "Deskripsi event akan ditampilkan di sini..."
-            tvRegistrationLink.text = "https://example.com/register"
-
-            // Setup bottom navigation
-            //bottomNavigation.selectedItemId = R.id.navigation_events
+            tvEventTitle.text = event.title
+            tvEventDescription.text = event.deskripsi
+            Glide.with(this@EventDetailActivity)
+                .load(event.photo)
+                .into(ivEventImage)
         }
     }
 
-    private fun setupListeners() {
-        binding.apply {
-            btnBack.setOnClickListener {
-                finish()
-            }
-
-//            bottomNavigation.setOnItemSelectedListener { menuItem ->
-//                when (menuItem.itemId) {
-//                    R.id.navigation_home -> {
-//                        // Navigate to Home
-//                        true
-//                    }
-//                    R.id.navigation_calendar -> {
-//                        // Navigate to Calendar
-//                        true
-//                    }
-//                    R.id.navigation_events -> {
-//                        // Already in Events
-//                        true
-//                    }
-//                    R.id.navigation_settings -> {
-//                        // Navigate to Settings
-//                        true
-//                    }
-//                    else -> false
-//                }
-//            }
-
-            // Optional: Make registration link clickable
-//            tvRegistrationLink.setOnClickListener {
-//                val url = tvRegistrationLink.text.toString()
-//                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-//                startActivity(intent)
-//            }
+    private fun setupBackButton() {
+        binding.backButton.setOnClickListener {
+            onBackPressed()
         }
     }
+    private fun getEventDetails(): News {
+        // Replace this with actual event details retrieval logic
+        return News(
+            id = 0,
+            title = intent.getStringExtra("title").toString(),
+            deskripsi = intent.getStringExtra("description").toString(),
+            photo = intent.getStringExtra("photo").toString(),
+            asalUniversitas = intent.getStringExtra("universitas").toString(),
+            namaOrganisasi = intent.getStringExtra("organisasi").toString()
+        )
+    }
+
+    data class EventDetails(
+        val title: String,
+        val description: String,
+        val imageUrl: String
+    )
 }

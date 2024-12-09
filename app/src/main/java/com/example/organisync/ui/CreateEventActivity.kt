@@ -1,133 +1,80 @@
 package com.example.organisync.ui
 
 import android.app.DatePickerDialog
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import com.example.organisync.R
-import com.google.android.datatransport.Event
-import com.google.android.material.button.MaterialButton
-import com.google.android.material.textfield.TextInputEditText
+import com.example.organisync.databinding.ActivityCreateEventBinding
 import java.util.Calendar
 
 class CreateEventActivity : AppCompatActivity() {
-    private lateinit var edtJudulEvent: TextInputEditText
-    private lateinit var edtTanggalEvent: TextInputEditText
-    private lateinit var edtDeskripsiEvent: TextInputEditText
-    private lateinit var btnBuat: MaterialButton
-    private lateinit var cardPhoto: androidx.cardview.widget.CardView
-    private var selectedImageUri: Uri? = null
 
-    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let {
-            selectedImageUri = it
-            // Here you can also set the image to an ImageView if you want to show the selected image
-        }
-    }
+    private lateinit var binding: ActivityCreateEventBinding
+    private var selectedImageUri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_create_event)
+        binding = ActivityCreateEventBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        initializeViews()
         setupListeners()
     }
 
-    private fun initializeViews() {
-        edtJudulEvent = findViewById(R.id.edtJudulEvent)
-        edtTanggalEvent = findViewById(R.id.edtTanggalEvent)
-        edtDeskripsiEvent = findViewById(R.id.edtDeskripsiEvent)
-        btnBuat = findViewById(R.id.btnBuat)
-        cardPhoto = findViewById(R.id.cardPhoto)
-    }
-
     private fun setupListeners() {
-        // Setup Date Picker
-        edtTanggalEvent.setOnClickListener {
-            showDatePicker()
+        binding.cardPhoto.setOnClickListener {
+            // Handle image selection
+            selectImage()
         }
 
-        // Setup Image Picker
-        cardPhoto.setOnClickListener {
-            getContent.launch("image/*")
-        }
-
-        // Setup Create Button
-        btnBuat.setOnClickListener {
-            if (validateInputs()) {
-                createEvent()
-            }
+        binding.btnBuat.setOnClickListener {
+            createEvent()
         }
     }
 
-    private fun showDatePicker() {
-        val calendar = Calendar.getInstance()
-        val year = calendar.get(Calendar.YEAR)
-        val month = calendar.get(Calendar.MONTH)
-        val day = calendar.get(Calendar.DAY_OF_MONTH)
-
-        DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
-            val selectedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
-            edtTanggalEvent.setText(selectedDate)
-        }, year, month, day).show()
+    private fun selectImage() {
+        // Implement image selection logic
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, IMAGE_PICK_CODE)
     }
 
-    private fun validateInputs(): Boolean {
-        var isValid = true
-
-        if (edtJudulEvent.text.toString().trim().isEmpty()) {
-            edtJudulEvent.error = "Judul event tidak boleh kosong"
-            isValid = false
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == IMAGE_PICK_CODE && resultCode == RESULT_OK) {
+            selectedImageUri = data?.data
+            binding.ivEventImage.setImageURI(selectedImageUri)
         }
-
-        if (edtTanggalEvent.text.toString().trim().isEmpty()) {
-            edtTanggalEvent.error = "Tanggal event tidak boleh kosong"
-            isValid = false
-        }
-
-        if (edtDeskripsiEvent.text.toString().trim().isEmpty()) {
-            edtDeskripsiEvent.error = "Deskripsi event tidak boleh kosong"
-            isValid = false
-        }
-
-        if (selectedImageUri == null) {
-            // Show error message for image
-            // You might want to show a Toast or Snackbar here
-            isValid = false
-        }
-
-        return isValid
     }
 
     private fun createEvent() {
-        // Here you would typically:
-        // 1. Create an Event object with all the data
-        // 2. Save it to your database or send it to your server
-        // 3. Show a success message
-        // 4. Navigate back or to another screen
+        val title = binding.edtJudulEvent.text.toString()
+        val description = binding.edtDeskripsiEvent.text.toString()
 
-//        val eventData = Event(
-//            judul = edtJudulEvent.text.toString(),
-//            tanggal = edtTanggalEvent.text.toString(),
-//            deskripsi = edtDeskripsiEvent.text.toString(),
-//            photoUri = selectedImageUri.toString()
-//        )
+        if (title.isEmpty() || description.isEmpty() || selectedImageUri == null) {
+            Toast.makeText(this, "Please fill all fields and select an image", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        // TODO: Save eventData to your database/server
+        val event = EventDetails(
+            title = title,
+            description = description,
+            imageUrl = selectedImageUri.toString()
+        )
 
-        // For now, just finish the activity
-        finish()
+        val intent = Intent(this, EventDetailActivity::class.java)
+        intent.putExtra("event", event)
+        startActivity(intent)
     }
-}
 
-// Data class to hold event information
-//data class Event(
-//    val judul: String,
-//    val tanggal: String,
-//    val deskripsi: String,
-//    val photoUri: String
-//)
+    companion object {
+        private const val IMAGE_PICK_CODE = 1000
+    }
+
+    data class EventDetails(
+        val title: String,
+        val description: String,
+        val imageUrl: String
+    ) : java.io.Serializable
+}

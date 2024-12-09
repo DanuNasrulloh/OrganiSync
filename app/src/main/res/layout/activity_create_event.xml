@@ -19,15 +19,6 @@
             android:textStyle="bold"
             android:layout_marginBottom="16dp"/>
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCreateEvent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Create Event"
-            android:textAllCaps="false"
-            android:backgroundTint="#FF7F7F"
-            android:layout_marginBottom="16dp"/>
-
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,11 +35,18 @@
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="172dp"
+            android:layout_width="379dp"
+            android:layout_height="250dp"
             android:layout_marginBottom="16dp"
             app:cardBackgroundColor="#EEEEEE"
             app:cardCornerRadius="8dp">
+
+            <ImageView
+                android:id="@+id/ivEventImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -63,16 +61,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtTanggalEvent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="Tanggal event"
-                android:focusable="false"
-                android:backgroundTint="#FFB5B5"/>
-        </com.google.android.material.textfield.TextInputLayout>
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"/>
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
@@ -87,21 +76,20 @@
                 android:backgroundTint="#FFB5B5"
                 android:gravity="top"
                 android:hint="Deskripsi Event" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnBuat"
-                android:layout_width="299dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center"
-                android:background="@drawable/button_background"
-                android:layout_marginTop="10dp"
-                android:padding="10dp"
-                android:text="BUAT"
-                android:textColor="@color/white" />
         </com.google.android.material.textfield.TextInputLayout>
-    </LinearLayout>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnBuat"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:backgroundTint="#FF7252"
+            android:fontFamily="@font/poppinsregular"
+            android:padding="10dp"
+            android:text="BUAT"
+            android:textColor="@color/white"
+            app:cornerRadius="100dp" />
+    </LinearLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
